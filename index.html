@@ -250,9 +250,6 @@ textarea{padding:12px 14px;resize:vertical}
         <button type="button" role="radio" aria-checked="false" data-phone="Android">Android</button>
       </div>
     </div>
-    <div class="field"><label for="bt-pay">How often are you paid?</label>
-      <select id="bt-pay" name="pay"><option value="">Choose one</option><option>Every week</option><option>Every two weeks</option><option>Twice a month</option><option>Once a month</option><option>It varies</option></select>
-    </div>
     <div class="field"><label for="bt-track">How do you keep track of bills now?</label>
       <select id="bt-track" name="track"><option value="">Choose one</option><option>Notes or a calendar</option><option>A spreadsheet</option><option>Another app</option><option>Not really</option></select>
     </div>
@@ -270,7 +267,7 @@ textarea{padding:12px 14px;resize:vertical}
     <h2 id="pv-title">Privacy notice</h2>
     <p>This notice covers this website and the beta sign-up. The full CacheDay Privacy Policy will be posted before the app launches.</p>
     <h3>What we collect</h3>
-    <p>Only what you choose to send in the beta sign-up: your name, email, phone type, how often you're paid, how you track bills, and any note you add.</p>
+    <p>Only what you choose to send in the beta sign-up: your name, email, phone type, how you track bills, and any note you add. If you used the extra paycheck finder first, we also include how often you're paid. The payday date you enter in the finder stays in your browser and isn't sent to us.</p>
     <h3>How we use it</h3>
     <ul>
       <li>To invite you to the beta and pick a good mix of testers</li>
@@ -311,6 +308,7 @@ textarea{padding:12px 14px;resize:vertical}
   function fmt(d) { return MON[d.getMonth()].slice(0, 3) + ' ' + d.getDate(); }
   function calc() {
     var v = input.value; if (!v) return;
+    window.cdPay = freq === 14 ? 'Every 2 weeks' : 'Every week';
     var p = v.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2], 12);
     var today = new Date(); today.setHours(12, 0, 0, 0);
     while (d < today) d.setDate(d.getDate() + freq);           // first payday from today on
@@ -382,7 +380,7 @@ textarea{padding:12px 14px;resize:vertical}
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) missing.push('a valid email');
     if (!phone) missing.push('your phone');
     if (missing.length) { msg.textContent = 'Please add ' + missing.join(', ') + '.'; msg.className = 'msg err'; return; }
-    var body = 'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + '\nPaid: ' + (form.pay.value || 'Not answered') + '\nTracks bills with: ' + (form.track.value || 'Not answered') + '\n\n' + form.notes.value.trim();
+    var body = 'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + (window.cdPay ? '\nPaid: ' + window.cdPay + ' (from the extra paycheck finder)' : '') + '\nTracks bills with: ' + (form.track.value || 'Not answered') + '\n\n' + form.notes.value.trim();
     window.location.href = 'mailto:support@cacheday.com?subject=' + encodeURIComponent('Beta tester sign-up: ' + name) + '&body=' + encodeURIComponent(body);
     msg.textContent = 'Your email app should open with your answers filled in. Just tap Send.'; msg.className = 'msg';
   });
