@@ -55,7 +55,7 @@ h2{margin:0 0 36px;font-family:"Inter Tight",Inter,sans-serif;font-size:38px;fon
 .fbox{padding:30px;border-radius:20px;background:#0B111C;border:1px solid #1C2636;display:flex;flex-direction:column;gap:16px}
 .fbox .seg{background:#070C14}
 .fbox input{background:#070C14;color-scheme:dark}
-.fresult{padding:30px;border-radius:20px;background:linear-gradient(160deg,rgba(163,230,53,.14),rgba(163,230,53,.03));border:2px solid #A3E635;display:flex;flex-direction:column;gap:14px}
+.fresult{justify-content:center;padding:30px;border-radius:20px;background:linear-gradient(160deg,rgba(163,230,53,.14),rgba(163,230,53,.03));border:2px solid #A3E635;display:flex;flex-direction:column;gap:14px}
 .fresult h3{margin:0;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#A3E635}
 .months{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
 .months li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 16px;border-radius:14px;background:rgba(7,12,20,.6)}
@@ -63,6 +63,12 @@ h2{margin:0 0 36px;font-family:"Inter Tight",Inter,sans-serif;font-size:38px;fon
 .months span{font-size:14px;color:#C7D0E0;text-align:right}
 .fresult p{margin:0;font-size:15px;line-height:1.5;color:#C7D0E0}
 .fresult .cta{align-self:flex-start;margin-top:4px}
+.fabout{display:flex;flex-direction:column;gap:12px}
+.fkicker{margin:0;font-size:15px !important;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#A3E635 !important}
+.fabout ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.fabout li{display:flex;gap:10px;font-size:16px;line-height:1.45;color:#C7D0E0}
+.fabout li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:#A3E635 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 6.5' fill='none' stroke='%230B1405' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/12px no-repeat}
+.months:not([hidden])+.fabout{padding-top:6px;border-top:1px solid rgba(163,230,53,.2)}
 .fempty{color:#9AA6BD;font-size:15px;line-height:1.5}
 @media (max-width:760px){.finder{grid-template-columns:1fr}.months li{flex-direction:column;align-items:flex-start;gap:4px}.months span{text-align:left}}
 
@@ -168,13 +174,19 @@ textarea{padding:12px 14px;resize:vertical}
             </div>
           </div>
           <div class="field"><label for="f-last">Your last payday</label><input id="f-last" type="date"></div>
-          <p class="fempty" style="margin:0">Paid every two weeks? Twice a year, a month gets three paychecks. Paid weekly? Some months get five. Find yours.</p>
+          <p class="fempty" style="margin:0">Your bills come monthly. Your paychecks don't. That's why a few months each year bring a bonus paycheck, and most people never see it coming. Find yours in seconds.</p>
         </div>
         <div class="fresult" aria-live="polite">
-          <h3>Your next extra paycheck months</h3>
-          <ul class="months" id="f-out"><li class="fempty">Enter your last payday to see them.</li></ul>
-          <p>CacheDay plans these extra checks for you, so they go where they help most.</p>
-          <button class="cta" type="button" data-open-beta>Join the beta</button>
+          <h3 id="f-head" hidden>Your next extra paycheck months</h3>
+          <ul class="months" id="f-out" hidden></ul>
+          <div class="fabout">
+            <p class="fkicker">Extra checks in CacheDay</p>
+            <ul>
+              <li>Shows up on your plan weeks ahead, so it's never a surprise</li>
+              <li>Your regular bills stay covered and on time</li>
+              <li>Works whether you're paid weekly or every two weeks</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -326,6 +338,7 @@ textarea{padding:12px 14px;resize:vertical}
       walk = next;
     }
     out.innerHTML = '';
+    out.hidden = !found.length; document.getElementById('f-head').hidden = !found.length;
     found.forEach(function (days) {
       var li = document.createElement('li'), m = days[0];
       li.innerHTML = '<b></b><span></span>';
