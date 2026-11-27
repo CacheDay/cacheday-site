@@ -316,7 +316,7 @@ textarea{padding:12px 14px;resize:vertical}
     <h2 id="pv-title">Privacy notice</h2>
     <p>This notice covers this website and the beta sign-up. A draft of the full CacheDay app <a href="privacy.html">Privacy Policy</a> is posted for review; the final version will be posted before the app launches.</p>
     <h3>What we collect</h3>
-    <p>Only what you choose to send in the beta sign-up: your name, email, phone type, how often you're paid, how you track bills, how you heard about CacheDay, and any note you add. If you used the extra paycheck finder first, we also include how often you're paid. The payday date you enter in the finder stays in your browser and isn't sent to us.</p>
+    <p>Only what you choose to send in the beta sign-up: your name, email, phone type, how often you're paid, how you track bills, how you heard about CacheDay, and any note you add. The payday date you enter in the extra paycheck finder stays in your browser and isn't sent to us.</p>
     <p>The sign-up form is run by Tally, our form provider. Your answers are kept in Tally, in a private Google Sheet we use as the beta list, and in our support inbox.</p>
     <h3>How we use it</h3>
     <ul>
@@ -371,7 +371,6 @@ textarea{padding:12px 14px;resize:vertical}
   function moved(x) { var y = new Date(x); for (var g = 0; g < 10 && off(y); g++) y.setDate(y.getDate() - 1); return y; }
   function calc() {
     var v = input.value; if (!v) return;
-    window.cdPay = freq === 14 ? 'Every 2 weeks' : 'Every week';
     var p = v.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2], 12);
     var today = new Date(); today.setHours(12, 0, 0, 0);
     while (d < today) d.setDate(d.getDate() + freq);           // first payday from today on
@@ -428,17 +427,16 @@ textarea{padding:12px 14px;resize:vertical}
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 
   document.querySelectorAll('[data-open-beta]').forEach(function (b) { b.addEventListener('click', function () { openBeta(b); }); });
-  // Beta sign-up form on Tally. Paste the form ID from the form's link (tally.so/r/FORM_ID).
-  var TALLY_FORM_ID = 'FORM_ID';
+  // Beta sign-up form on Tally: https://tally.so/r/e5R9aQ
+  var TALLY_FORM_ID = 'e5R9aQ';
   function betaThanks() { if (window.Tally) Tally.closePopup(TALLY_FORM_ID); setTimeout(function () { openDialog('thanks'); }, 250); }
   function openBeta(opener) {
     lastOpener = opener;
-    var hidden = window.cdPay ? { paid: window.cdPay } : {};
     if (window.Tally && Tally.openPopup) {
-      Tally.openPopup(TALLY_FORM_ID, { layout: 'modal', width: 480, overlay: true, hiddenFields: hidden, onSubmit: betaThanks });
+      Tally.openPopup(TALLY_FORM_ID, { layout: 'modal', width: 480, overlay: true, onSubmit: betaThanks });
     } else {
       // Tally's script didn't load (blocked or offline): open the form on its own page instead.
-      window.open('https://tally.so/r/' + TALLY_FORM_ID + (window.cdPay ? '?paid=' + encodeURIComponent(window.cdPay) : ''), '_blank', 'noopener');
+      window.open('https://tally.so/r/' + TALLY_FORM_ID, '_blank', 'noopener');
     }
   }
 })();
