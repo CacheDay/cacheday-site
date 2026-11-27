@@ -133,6 +133,19 @@ textarea{padding:12px 14px;resize:vertical}
   section{padding:56px 0}
 }
 @media (prefers-reduced-motion:no-preference){.overlay.open .card{animation:pop .18s ease-out}@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:none;opacity:1}}}
+
+.hooks .reel{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.hooks figure{margin:0}
+.hooks .clip{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#101812;box-shadow:0 20px 50px rgba(0,0,0,.45);aspect-ratio:9/16}
+.hooks video{display:block;width:100%;height:100%;object-fit:cover}
+.hooks figcaption{margin:12px 0 0;text-align:center;font-size:15px;font-weight:700;color:#fff;white-space:nowrap}
+.hooks .note{margin:16px 0 0;text-align:center;font-size:14px;color:#9AA6BD}
+@media (max-width:760px){
+.hooks .reel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:24px -20px 0;padding:0 20px 6px;scrollbar-width:none}
+.hooks .reel::-webkit-scrollbar{display:none}
+.hooks figure{flex:0 0 72%;scroll-snap-align:center}
+}
+
 </style>
 </head>
 <body>
@@ -148,7 +161,7 @@ textarea{padding:12px 14px;resize:vertical}
 
   <div class="wrap video" aria-label="App tour">
     <div class="frame">
-      <video src="cacheday-tour.mp4" poster="cacheday-tour-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="A tour of the CacheDay app: bills by paycheck, what's left after bills, how much to set aside, paying a bill, extra paychecks, and extra cash"></video>
+      <video src="cacheday-tour.mp4" poster="cacheday-tour-poster.jpg" autoplay muted loop playsinline preload="metadata" aria-label="A tour of the CacheDay app: bills by paycheck, what's left after bills, paying a bill, extra paychecks, and extra cash"></video>
     </div>
     <p class="cap">A quick look at the CacheDay app. Sample data shown.</p>
   </div>
@@ -162,6 +175,28 @@ textarea{padding:12px 14px;resize:vertical}
         <div class="step"><div class="num">2</div><h3>Add your bills</h3><p>Each bill's amount and due date, plus a link to pay it.</p></div>
         <div class="step"><div class="num">3</div><h3>CacheDay plans it</h3><p>Every bill lands on the best paycheck, so it's never late and never paid a month early.</p></div>
       </div>
+    </div>
+  </section>
+
+  <section class="hooks" aria-labelledby="hooks-title">
+    <div class="wrap">
+      <p class="eyebrow">See it in 15 seconds</p>
+      <h2 id="hooks-title">Three moments CacheDay plans for you</h2>
+      <div class="reel">
+        <figure>
+          <div class="clip"><video src="cacheday-hook-rent.mp4" poster="cacheday-hook-rent.jpg" muted loop playsinline preload="none" aria-label="Rent is due the 1st and payday is the 4th. CacheDay plans which check pays it, then shows how much is left over."></video></div>
+          <figcaption>Rent before payday</figcaption>
+        </figure>
+        <figure>
+          <div class="clip"><video src="cacheday-hook-extra-paycheck.mp4" poster="cacheday-hook-extra-paycheck.jpg" muted loop playsinline preload="none" aria-label="Some months bring a third paycheck. CacheDay spots it ahead of time so you can plan it before it lands."></video></div>
+          <figcaption>Extra paycheck months</figcaption>
+        </figure>
+        <figure>
+          <div class="clip"><video src="cacheday-hook-extra-cash.mp4" poster="cacheday-hook-extra-cash.jpg" muted loop playsinline preload="none" aria-label="A gas bill comes in under budget. CacheDay catches the difference as extra cash, and you choose to send $45 more toward your card."></video></div>
+          <figcaption>Extra cash</figcaption>
+        </figure>
+      </div>
+      <p class="note">Tap a video for controls. Sample data shown.</p>
     </div>
   </section>
 
@@ -413,6 +448,18 @@ textarea{padding:12px 14px;resize:vertical}
     window.location.href = 'mailto:support@cacheday.com?subject=' + encodeURIComponent('Beta tester sign-up: ' + name) + '&body=' + encodeURIComponent(body);
     msg.textContent = 'Your email app should open with your answers filled in. Just tap Send.'; msg.className = 'msg';
   });
+})();
+</script>
+<script>
+(function(){
+  var vids=document.querySelectorAll('.hooks video');
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  vids.forEach(function(v){v.addEventListener('click',function(){v.controls=true;});});
+  if(still||!('IntersectionObserver' in window)){vids.forEach(function(v){v.controls=true;});return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;
+    if(e.isIntersecting&&e.intersectionRatio>=.6){if(v.preload==='none')v.preload='auto';var p=v.play();if(p&&p.catch)p.catch(function(){v.controls=true;});}
+    else if(!v.controls||v.muted){v.pause();}});},{threshold:[0,.6]});
+  vids.forEach(function(v){io.observe(v);});
 })();
 </script>
 </body>
