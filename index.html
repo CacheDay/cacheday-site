@@ -120,6 +120,12 @@ textarea{padding:12px 14px;resize:vertical}
 .submit{min-height:54px;border:0;border-radius:999px;background:#A3E635;color:#000000;font:800 16px Inter,sans-serif;cursor:pointer}
 .msg{font-size:13px;line-height:1.45;color:#A3A3A3}
 .msg.err{color:#FF8A95}
+.bad{border-color:#FF8A95 !important}
+.done{align-items:center;text-align:center}
+.done h2{padding-right:0}
+.done .tick{width:64px;height:64px;border-radius:50%;background:#A3E635;display:flex;align-items:center;justify-content:center}
+.done .submit{width:100%}
+.again{background:none;border:0;padding:0;color:#9AA6BD;font:13px Inter,sans-serif;text-decoration:underline;cursor:pointer}
 .consent{font-size:12px !important;color:#9AA6BD !important}
 .consent button{background:none;border:0;padding:0;color:#A3E635;font:inherit;text-decoration:underline;cursor:pointer}
 
@@ -297,22 +303,32 @@ textarea{padding:12px 14px;resize:vertical}
     <button class="close" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/></svg></button>
     <h2 id="bt-title">Join the beta</h2>
     <p>Tell us a little about you and we'll invite you when testing starts. At launch, we'll email you a founding-member code for CacheDay Connect.</p>
-    <div class="field"><label for="bt-name">Name</label><input id="bt-name" name="name" type="text" autocomplete="name"></div>
-    <div class="field"><label for="bt-email">Email</label><input id="bt-email" name="email" type="email" autocomplete="email"></div>
+    <div class="field"><label for="bt-name">Name</label><input id="bt-name" name="name" type="text" autocomplete="name" required aria-required="true"></div>
+    <div class="field"><label for="bt-email">Email</label><input id="bt-email" name="email" type="email" autocomplete="email" required aria-required="true"></div>
     <div class="field"><span class="flabel" id="phone-label">Your phone</span>
-      <div class="seg" role="radiogroup" aria-labelledby="phone-label">
+      <div class="seg" id="bt-phone" role="radiogroup" aria-labelledby="phone-label" aria-required="true">
         <button type="button" role="radio" aria-checked="false" data-phone="iPhone">iPhone</button>
         <button type="button" role="radio" aria-checked="false" data-phone="Android">Android</button>
       </div>
     </div>
     <div class="field"><label for="bt-track">How do you keep track of bills now?</label>
-      <select id="bt-track" name="track"><option value="">Choose one</option><option>Notes or a calendar</option><option>A spreadsheet</option><option>Another app</option><option>Not really</option></select>
+      <select id="bt-track" name="track" required aria-required="true"><option value="">Choose one</option><option>Notes or a calendar</option><option>A spreadsheet</option><option>Another app</option><option>Not really</option></select>
     </div>
     <div class="field"><label for="bt-notes">Anything else? (optional)</label><textarea id="bt-notes" name="notes" rows="3"></textarea></div>
     <button class="submit" type="submit">Join the beta</button>
     <p class="consent">By signing up, you agree that CacheDay can email you about the beta and launch. You can unsubscribe anytime. See our <button type="button" data-open-privacy>Privacy notice</button>.</p>
     <span class="msg" id="msg" role="status"></span>
   </form>
+</div>
+
+<div class="overlay" id="thanks" data-dialog>
+  <div class="card done" role="dialog" aria-modal="true" aria-labelledby="ty-title">
+    <div class="tick" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2 id="ty-title">Thanks for signing up!</h2>
+    <p>We received your beta request. You&rsquo;ll get an email from the CacheDay team with your next steps.</p>
+    <button class="submit" type="button" data-close>Done</button>
+    <button class="again" type="button" id="send-again">Didn&rsquo;t send the email? Open it again</button>
+  </div>
 </div>
 
 <!-- Privacy notice -->
@@ -440,15 +456,40 @@ textarea{padding:12px 14px;resize:vertical}
       document.querySelectorAll('[data-phone]').forEach(function (x) { x.setAttribute('aria-checked', x === b ? 'true' : 'false'); });
     });
   });
+  var mailUrl = '', waiting = false, left = false;
+  function mark(el, bad) { el.classList.toggle('bad', bad); el.setAttribute('aria-invalid', bad ? 'true' : 'false'); }
+  function showThanks() {
+    if (!waiting) return;
+    waiting = false; left = false;
+    form.reset(); phone = '';
+    document.querySelectorAll('[data-phone]').forEach(function (x) { x.setAttribute('aria-checked', 'false'); });
+    msg.textContent = ''; msg.className = 'msg';
+    openDialog('thanks');
+    document.querySelector('#thanks [data-close]').focus();
+  }
+  // The visitor leaves for their email app to press Send. When they come back, thank them.
+  function away() { if (waiting) left = true; }
+  function back() { if (waiting && left) setTimeout(showThanks, 300); }
+  window.addEventListener('blur', away);
+  window.addEventListener('focus', back);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) away(); else back(); });
+  document.getElementById('send-again').addEventListener('click', function () { if (mailUrl) { waiting = true; left = false; window.location.href = mailUrl; } });
+  document.querySelectorAll('[data-phone]').forEach(function (b) { b.addEventListener('click', function () { mark(document.getElementById('bt-phone'), false); }); });
+  [form.name, form.email, form.track].forEach(function (el) { el.addEventListener('input', function () { mark(el, false); }); el.addEventListener('change', function () { mark(el, false); }); });
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = form.name.value.trim(), email = form.email.value.trim(), missing = [];
+    var name = form.name.value.trim(), email = form.email.value.trim(), track = form.track.value, missing = [];
+    var okEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+    mark(form.name, !name); mark(form.email, !okEmail); mark(document.getElementById('bt-phone'), !phone); mark(form.track, !track);
     if (!name) missing.push('your name');
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) missing.push('a valid email');
+    if (!okEmail) missing.push('a valid email');
     if (!phone) missing.push('your phone');
+    if (!track) missing.push('how you keep track of bills');
     if (missing.length) { msg.textContent = 'Please add ' + missing.join(', ') + '.'; msg.className = 'msg err'; return; }
-    var body = 'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + (window.cdPay ? '\nPaid: ' + window.cdPay + ' (from the extra paycheck finder)' : '') + '\nTracks bills with: ' + (form.track.value || 'Not answered') + '\n\n' + form.notes.value.trim();
-    window.location.href = 'mailto:support@cacheday.com?subject=' + encodeURIComponent('Beta tester sign-up: ' + name) + '&body=' + encodeURIComponent(body);
+    var body = 'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + (window.cdPay ? '\nPaid: ' + window.cdPay + ' (from the extra paycheck finder)' : '') + '\nTracks bills with: ' + track + '\n\n' + form.notes.value.trim();
+    mailUrl = 'mailto:support@cacheday.com?subject=' + encodeURIComponent('Beta tester sign-up: ' + name) + '&body=' + encodeURIComponent(body);
+    waiting = true; left = false;
+    window.location.href = mailUrl;
     msg.textContent = 'Your email app should open with your answers filled in. Just tap Send.'; msg.className = 'msg';
   });
 })();
