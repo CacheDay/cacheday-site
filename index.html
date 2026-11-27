@@ -511,9 +511,11 @@ textarea{padding:12px 14px;resize:vertical}
     });
   });
   if(still||!('IntersectionObserver' in window))return;
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;
-    if(e.isIntersecting&&e.intersectionRatio>=.6)play(v);else v.pause();});},{threshold:[0,.6]});
-  clips.forEach(function(c){io.observe(c.querySelector('video'));});
+  // All three play together while the section is on screen, and pause when it scrolls away.
+  var vids=clips.map(function(c){return c.querySelector('video');});
+  var io=new IntersectionObserver(function(es){var on=es[0].isIntersecting;
+    vids.forEach(function(v){if(on)play(v);else v.pause();});},{threshold:.2});
+  io.observe(document.querySelector('.hooks .reel'));
 })();
 </script>
 </body>
