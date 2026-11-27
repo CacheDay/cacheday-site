@@ -298,37 +298,14 @@ textarea{padding:12px 14px;resize:vertical}
   </div>
 </footer>
 
-<!-- Beta sign-up -->
-<div class="overlay" id="beta" data-dialog>
-  <form class="card" id="form" role="dialog" aria-modal="true" aria-labelledby="bt-title" novalidate>
-    <button class="close" type="button" data-close aria-label="Close"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/></svg></button>
-    <h2 id="bt-title">Join the beta</h2>
-    <p>Tell us a little about you and we'll invite you when testing starts. At launch, we'll email you a founding-member code for CacheDay Connect.</p>
-    <div class="field"><label for="bt-name">Name</label><input id="bt-name" name="name" type="text" autocomplete="name" required aria-required="true"></div>
-    <div class="field"><label for="bt-email">Email</label><input id="bt-email" name="email" type="email" autocomplete="email" required aria-required="true"></div>
-    <div class="field"><span class="flabel" id="phone-label">Your phone</span>
-      <div class="seg" id="bt-phone" role="radiogroup" aria-labelledby="phone-label" aria-required="true">
-        <button type="button" role="radio" aria-checked="false" data-phone="iPhone">iPhone</button>
-        <button type="button" role="radio" aria-checked="false" data-phone="Android">Android</button>
-      </div>
-    </div>
-    <div class="field"><label for="bt-track">How do you keep track of bills now?</label>
-      <select id="bt-track" name="track" required aria-required="true"><option value="">Choose one</option><option>Notes or a calendar</option><option>A spreadsheet</option><option>Another app</option><option>Not really</option></select>
-    </div>
-    <div class="field"><label for="bt-notes">Anything else? (optional)</label><textarea id="bt-notes" name="notes" rows="3"></textarea></div>
-    <button class="submit" type="submit">Join the beta</button>
-    <p class="consent">By signing up, you agree that CacheDay can email you about the beta and launch. You can unsubscribe anytime. See our <button type="button" data-open-privacy>Privacy notice</button>.</p>
-    <span class="msg" id="msg" role="status"></span>
-  </form>
-</div>
+<!-- Beta sign-up: the form itself is on Tally (opened as a pop-up by the script below) -->
 
 <div class="overlay" id="thanks" data-dialog>
   <div class="card done" role="dialog" aria-modal="true" aria-labelledby="ty-title">
     <div class="tick" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
     <h2 id="ty-title">Thanks for signing up!</h2>
-    <p>We received your beta request. You&rsquo;ll get an email from the CacheDay team with your next steps.</p>
+    <p>You&rsquo;re on the list. We&rsquo;ll email you when the beta is ready.</p>
     <button class="submit" type="button" data-close>Done</button>
-    <button class="again" type="button" id="send-again">Didn&rsquo;t send the email? Open it again</button>
   </div>
 </div>
 
@@ -340,6 +317,7 @@ textarea{padding:12px 14px;resize:vertical}
     <p>This notice covers this website and the beta sign-up. A draft of the full CacheDay app <a href="privacy.html">Privacy Policy</a> is posted for review; the final version will be posted before the app launches.</p>
     <h3>What we collect</h3>
     <p>Only what you choose to send in the beta sign-up: your name, email, phone type, how you track bills, and any note you add. If you used the extra paycheck finder first, we also include how often you're paid. The payday date you enter in the finder stays in your browser and isn't sent to us.</p>
+    <p>The sign-up form is run by Tally, our form provider. Your answers are kept in Tally, in a private Google Sheet we use as the beta list, and in our support inbox.</p>
     <h3>How we use it</h3>
     <ul>
       <li>To invite you to the beta and pick a good mix of testers</li>
@@ -443,56 +421,26 @@ textarea{padding:12px 14px;resize:vertical}
     document.querySelectorAll('[data-dialog].open').forEach(function (d) { d.classList.remove('open'); });
     if (lastOpener) lastOpener.focus();
   }
-  document.querySelectorAll('[data-open-beta]').forEach(function (b) { b.addEventListener('click', function () { openDialog('beta', b); }); });
   document.querySelectorAll('[data-open-privacy]').forEach(function (b) { b.addEventListener('click', function () { openDialog('privacy', b); }); });
   document.querySelectorAll('[data-open-terms]').forEach(function (b) { b.addEventListener('click', function () { openDialog('terms', b); }); });
   document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', closeAll); });
   document.querySelectorAll('[data-dialog]').forEach(function (d) { d.addEventListener('click', function (e) { if (e.target === d) closeAll(); }); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 
-  var form = document.getElementById('form'), msg = document.getElementById('msg'), phone = '';
-  document.querySelectorAll('[data-phone]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      phone = b.getAttribute('data-phone');
-      document.querySelectorAll('[data-phone]').forEach(function (x) { x.setAttribute('aria-checked', x === b ? 'true' : 'false'); });
-    });
-  });
-  var mailUrl = '', waiting = false, left = false;
-  function mark(el, bad) { el.classList.toggle('bad', bad); el.setAttribute('aria-invalid', bad ? 'true' : 'false'); }
-  function showThanks() {
-    if (!waiting) return;
-    waiting = false; left = false;
-    form.reset(); phone = '';
-    document.querySelectorAll('[data-phone]').forEach(function (x) { x.setAttribute('aria-checked', 'false'); });
-    msg.textContent = ''; msg.className = 'msg';
-    openDialog('thanks');
-    document.querySelector('#thanks [data-close]').focus();
+  document.querySelectorAll('[data-open-beta]').forEach(function (b) { b.addEventListener('click', function () { openBeta(b); }); });
+  // Beta sign-up form on Tally. Paste the form ID from the form's link (tally.so/r/FORM_ID).
+  var TALLY_FORM_ID = 'FORM_ID';
+  function betaThanks() { if (window.Tally) Tally.closePopup(TALLY_FORM_ID); setTimeout(function () { openDialog('thanks'); }, 250); }
+  function openBeta(opener) {
+    lastOpener = opener;
+    var hidden = window.cdPay ? { paid: window.cdPay } : {};
+    if (window.Tally && Tally.openPopup) {
+      Tally.openPopup(TALLY_FORM_ID, { layout: 'modal', width: 480, overlay: true, hiddenFields: hidden, onSubmit: betaThanks });
+    } else {
+      // Tally's script didn't load (blocked or offline): open the form on its own page instead.
+      window.open('https://tally.so/r/' + TALLY_FORM_ID + (window.cdPay ? '?paid=' + encodeURIComponent(window.cdPay) : ''), '_blank', 'noopener');
+    }
   }
-  // The visitor leaves for their email app to press Send. When they come back, thank them.
-  function away() { if (waiting) left = true; }
-  function back() { if (waiting && left) setTimeout(showThanks, 300); }
-  window.addEventListener('blur', away);
-  window.addEventListener('focus', back);
-  document.addEventListener('visibilitychange', function () { if (document.hidden) away(); else back(); });
-  document.getElementById('send-again').addEventListener('click', function () { if (mailUrl) { waiting = true; left = false; window.location.href = mailUrl; } });
-  document.querySelectorAll('[data-phone]').forEach(function (b) { b.addEventListener('click', function () { mark(document.getElementById('bt-phone'), false); }); });
-  [form.name, form.email, form.track].forEach(function (el) { el.addEventListener('input', function () { mark(el, false); }); el.addEventListener('change', function () { mark(el, false); }); });
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var name = form.name.value.trim(), email = form.email.value.trim(), track = form.track.value, missing = [];
-    var okEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-    mark(form.name, !name); mark(form.email, !okEmail); mark(document.getElementById('bt-phone'), !phone); mark(form.track, !track);
-    if (!name) missing.push('your name');
-    if (!okEmail) missing.push('a valid email');
-    if (!phone) missing.push('your phone');
-    if (!track) missing.push('how you keep track of bills');
-    if (missing.length) { msg.textContent = 'Please add ' + missing.join(', ') + '.'; msg.className = 'msg err'; return; }
-    var body = 'Name: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + (window.cdPay ? '\nPaid: ' + window.cdPay + ' (from the extra paycheck finder)' : '') + '\nTracks bills with: ' + track + '\n\n' + form.notes.value.trim();
-    mailUrl = 'mailto:support@cacheday.com?subject=' + encodeURIComponent('Beta tester sign-up: ' + name) + '&body=' + encodeURIComponent(body);
-    waiting = true; left = false;
-    window.location.href = mailUrl;
-    msg.textContent = 'Your email app should open with your answers filled in. Just tap Send.'; msg.className = 'msg';
-  });
 })();
 </script>
 <script>
@@ -518,5 +466,6 @@ textarea{padding:12px 14px;resize:vertical}
   io.observe(document.querySelector('.hooks .reel'));
 })();
 </script>
+<script async src="https://tally.so/widgets/embed.js"></script>
 </body>
 </html>
