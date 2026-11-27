@@ -425,6 +425,8 @@ textarea{padding:12px 14px;resize:vertical}
   document.querySelectorAll('[data-close]').forEach(function (b) { b.addEventListener('click', closeAll); });
   document.querySelectorAll('[data-dialog]').forEach(function (d) { d.addEventListener('click', function (e) { if (e.target === d) closeAll(); }); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+  // cacheday.com/#privacy opens the Privacy notice (linked from the Tally sign-up form).
+  if (location.hash === '#privacy') openDialog('privacy');
 
   document.querySelectorAll('[data-open-beta]').forEach(function (b) { b.addEventListener('click', function () { openBeta(b); }); });
   // Beta sign-up form on Tally: https://tally.so/r/e5R9aQ
