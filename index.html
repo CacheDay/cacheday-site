@@ -144,10 +144,11 @@ textarea{padding:12px 14px;resize:vertical}
 .hooks figure{margin:0}
 .hooks .clip{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#101812;box-shadow:0 20px 50px rgba(0,0,0,.45);aspect-ratio:9/16}
 .hooks video{display:block;width:100%;height:100%;object-fit:cover}
-.hooks .play{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;border:0;padding:0;background:transparent;cursor:pointer;transition:opacity .25s}
-.hooks .play svg{width:76px;height:76px;padding:20px 18px 20px 22px;border-radius:50%;background:#A3E635;fill:#000;box-shadow:0 10px 30px rgba(0,0,0,.45)}
-.hooks .clip.on .play{opacity:0;pointer-events:none}
-.hooks figcaption{margin:12px 0 0;text-align:center;font-size:15px;font-weight:700;color:#fff;white-space:nowrap}
+.hooks .snd{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#A3E635;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hooks .snd svg{width:22px;height:22px;fill:#000}
+.hooks .snd .i-on,.hooks .snd[aria-pressed="true"] .i-off{display:none}
+.hooks .snd[aria-pressed="true"] .i-on{display:block}
+.hooks figcaption{margin:12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px;text-align:center;font-size:15px;font-weight:700;color:#fff;white-space:nowrap}
 .hooks .note{margin:16px 0 0;text-align:center;font-size:14px;color:#9AA6BD}
 @media (max-width:760px){
 .hooks .reel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:24px -20px 0;padding:0 20px 6px;scrollbar-width:none}
@@ -193,19 +194,19 @@ textarea{padding:12px 14px;resize:vertical}
       <h2 id="hooks-title">Three moments CacheDay plans for you</h2>
       <div class="reel">
         <figure>
-          <div class="clip"><button class="play" type="button" aria-label="Play with sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button><video src="cacheday-hook-rent.mp4" poster="cacheday-hook-rent.jpg" playsinline preload="none" aria-label="Rent is due the 1st and payday is the 4th. CacheDay plans which check pays it, then shows how much is left over."></video></div>
-          <figcaption>Rent before payday</figcaption>
+          <div class="clip"><video src="cacheday-hook-rent.mp4" poster="cacheday-hook-rent.jpg" muted loop playsinline preload="none" aria-label="Rent is due the 1st and payday is the 4th. CacheDay plans which check pays it, then shows how much is left over."></video></div>
+          <figcaption><span>Rent before payday</span><button class="snd" type="button" aria-label="Turn sound on" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg><svg class="i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg></button></figcaption>
         </figure>
         <figure>
-          <div class="clip"><button class="play" type="button" aria-label="Play with sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button><video src="cacheday-hook-extra-paycheck.mp4" poster="cacheday-hook-extra-paycheck.jpg" playsinline preload="none" aria-label="Some months bring a third paycheck. CacheDay spots it ahead of time so you can plan it before it lands."></video></div>
-          <figcaption>Extra paycheck months</figcaption>
+          <div class="clip"><video src="cacheday-hook-extra-paycheck.mp4" poster="cacheday-hook-extra-paycheck.jpg" muted loop playsinline preload="none" aria-label="Some months bring a third paycheck. CacheDay spots it ahead of time so you can plan it before it lands."></video></div>
+          <figcaption><span>Extra paycheck months</span><button class="snd" type="button" aria-label="Turn sound on" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg><svg class="i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg></button></figcaption>
         </figure>
         <figure>
-          <div class="clip"><button class="play" type="button" aria-label="Play with sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></button><video src="cacheday-hook-extra-cash.mp4" poster="cacheday-hook-extra-cash.jpg" playsinline preload="none" aria-label="A gas bill comes in under budget. CacheDay catches the difference as extra cash, and you choose to send $45 more toward your card."></video></div>
-          <figcaption>Extra cash</figcaption>
+          <div class="clip"><video src="cacheday-hook-extra-cash.mp4" poster="cacheday-hook-extra-cash.jpg" muted loop playsinline preload="none" aria-label="A gas bill comes in under budget. CacheDay catches the difference as extra cash, and you choose to send $45 more toward your card."></video></div>
+          <figcaption><span>Extra cash</span><button class="snd" type="button" aria-label="Turn sound on" aria-pressed="false"><svg class="i-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg><svg class="i-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/></svg></button></figcaption>
         </figure>
       </div>
-      <p class="note">Tap a video to play it with sound. Sample data shown.</p>
+      <p class="note">Tap the speaker to hear the voiceover. Sample data shown.</p>
     </div>
   </section>
 
@@ -496,20 +497,23 @@ textarea{padding:12px 14px;resize:vertical}
 </script>
 <script>
 (function(){
-  var clips=document.querySelectorAll('.hooks .clip');
-  function stop(c){var v=c.querySelector('video');v.pause();c.classList.remove('on');}
+  var clips=[].slice.call(document.querySelectorAll('.hooks figure'));
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setSound(c,on){var v=c.querySelector('video'),b=c.querySelector('.snd');v.muted=!on;b.setAttribute('aria-pressed',on?'true':'false');b.setAttribute('aria-label',on?'Turn sound off':'Turn sound on');}
+  function play(v){v.preload='auto';var p=v.play();if(p&&p.catch)p.catch(function(){});}
   clips.forEach(function(c){
     var v=c.querySelector('video');
-    c.querySelector('.play').addEventListener('click',function(){
-      clips.forEach(function(o){if(o!==c)stop(o);});
-      if(v.ended)v.currentTime=0;
-      v.muted=false;v.preload='auto';
-      var p=v.play();c.classList.add('on');
-      if(p&&p.catch)p.catch(function(){c.classList.remove('on');});
+    c.querySelector('.snd').addEventListener('click',function(){
+      if(v.muted){
+        clips.forEach(function(o){if(o!==c){setSound(o,false);if(still)o.querySelector('video').pause();}});
+        setSound(c,true);v.currentTime=0;play(v);
+      }else{setSound(c,false);if(still)v.pause();}
     });
-    v.addEventListener('click',function(){stop(c);});
-    v.addEventListener('ended',function(){c.classList.remove('on');v.currentTime=0;});
   });
+  if(still||!('IntersectionObserver' in window))return;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;
+    if(e.isIntersecting&&e.intersectionRatio>=.6)play(v);else v.pause();});},{threshold:[0,.6]});
+  clips.forEach(function(c){io.observe(c.querySelector('video'));});
 })();
 </script>
 </body>
